@@ -15,7 +15,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MovieRepository {
-    public static String API_KEY = "44be25dca5ed7d023c137cb2427c2af5";
+
     NetworkHelper networkHelper;
 
     List<Movie> trendingMovies = new ArrayList();
@@ -33,20 +33,20 @@ public class MovieRepository {
 
 
     public void fetchTrending() {
-        networkHelper.getService().getTrending("movie", "day", API_KEY).enqueue(trendingCallBack);
+        networkHelper.getService().getTrending("movie", "day").enqueue(trendingCallBack);
     }
 
     public void fetchNowPlaying(Integer pageNo) {
-        networkHelper.getService().getNowPlaying(pageNo, API_KEY).enqueue(nowPlayingCallBack);
+        networkHelper.getService().getNowPlaying(pageNo).enqueue(nowPlayingCallBack);
     }
 
     public void fetchSingleMovie(Integer movieId) {
         currentSelectedMovieLiveData.setValue(null);
-        networkHelper.getService().getMovieById(movieId, API_KEY).enqueue(currentMovieCallback);
+        networkHelper.getService().getMovieById(movieId).enqueue(currentMovieCallback);
     }
 
     public void searchMovie(String text) {
-        networkHelper.getService().searchMovie(text, API_KEY).enqueue(searchMovieCallback);
+        networkHelper.getService().searchMovie(text).enqueue(searchMovieCallback);
     }
 
     Callback<SearchResponse> trendingCallBack = new Callback<SearchResponse>() {

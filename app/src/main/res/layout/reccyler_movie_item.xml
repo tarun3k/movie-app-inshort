@@ -9,7 +9,7 @@
     android:layout_margin="@dimen/margin_small"
     app:cardElevation="0dp"
     app:strokeColor="@color/stroke_color"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent">
