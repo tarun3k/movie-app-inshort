@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="padding_small">8dp</dimen>
+    <dimen name="margin_medium">12dp</dimen>
+    <dimen name="margin_small">4dp</dimen>
+
+    <dimen name="progress_size">50dp</dimen>
+    <dimen name="progress_indicator_size">10dp</dimen>
+
+    <dimen name="movie_item_image_width">200dp</dimen>
+    <dimen name="movie_item_image_height">300dp</dimen>
+
+    <dimen name="search_image_width">100dp</dimen>
+    <dimen name="search_image_height">150dp</dimen>
+
+    <dimen name="corner_radius">4dp</dimen>
+
+
+    <dimen name="text_size_medium">18sp</dimen>
+    <dimen name="text_size_large">24sp</dimen>
+    <dimen name="text_size_small">14sp</dimen>
+</resources>

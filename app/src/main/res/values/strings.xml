@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Movie App Inshort</string>
+    <string name="search_text_place_holder">Search Movies</string>
 </resources>

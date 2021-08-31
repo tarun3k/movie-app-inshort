@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    app:strokeColor="@color/black"
+    android:background="@color/white"
+    app:contentPadding="@dimen/padding_small"
+    app:cardCornerRadius="@dimen/corner_radius"
+    android:layout_margin="@dimen/margin_small"
+    android:layout_height="wrap_content">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_size_medium"
+        android:textColor="@color/teal_700"
+        tools:text="Comedy"
+        />
+
+</com.google.android.material.card.MaterialCardView>
+</layout>

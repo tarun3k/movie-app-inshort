@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:padding="@dimen/padding_small"
+    app:cardCornerRadius="4dp"
+    app:strokeWidth="1dp"
+    android:layout_margin="@dimen/margin_small"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/stroke_color"
+    android:layout_height="match_parent">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/image"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_width="@dimen/movie_item_image_width"
+        android:layout_height="@dimen/movie_item_image_height"/>
+    <TextView
+        android:id="@+id/title"
+        android:padding="@dimen/padding_small"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        app:layout_constraintTop_toBottomOf="@id/image"
+        android:layout_marginTop="@dimen/margin_medium"
+        app:layout_constraintEnd_toEndOf="@id/image"
+        android:textSize="@dimen/text_size_medium"
+        android:fontFamily="sans-serif-black"
+        app:layout_constraintStart_toStartOf="@id/image"
+        tools:text="This is litle"
+        />
+    <TextView
+        android:id="@+id/rating"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        android:layout_marginTop="@dimen/margin_small"
+        android:textAlignment="center"
+        android:fontFamily="sans-serif-black"
+        app:layout_constraintEnd_toEndOf="@id/image"
+        android:textSize="@dimen/text_size_medium"
+        app:layout_constraintStart_toStartOf="@id/image"
+        tools:text="This is litle"
+        />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>
+</layout>
