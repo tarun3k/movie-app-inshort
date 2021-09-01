@@ -31,9 +31,6 @@ public class HomeViewModel extends ViewModel {
         this.movieRepository = movieRepository;
     }
 
-    public LiveData<List<Movie>> observeTrendingMovies() {
-        return movieRepository.trendingMoviesLiveData;
-    }
     public void  intiAllLiveDatas() {
         listOfWidgets.add(new Pair("Saved Movies",movieRepository.getSavedMovies()));
         listOfWidgets.add(new Pair("Now Playing",movieRepository.nowPlayingMoviesLiveData));
@@ -47,10 +44,6 @@ public class HomeViewModel extends ViewModel {
 
     public LiveData<Integer> observeNowPlayingTotalPagesLiveData() {
         return movieRepository.nowPlayingTotalPagesLiveData;
-    }
-
-    public LiveData<List<Movie>> observeNowPlayingMovies() {
-        return movieRepository.nowPlayingMoviesLiveData;
     }
 
     public LiveData<SingleMovieData> observeCurrentMovieData() {
@@ -85,14 +78,6 @@ public class HomeViewModel extends ViewModel {
 
     public void resetSearchMovies() {
         ((MutableLiveData<List<Movie>>) movieRepository.searchMoviesLiveData).setValue(null);
-    }
-
-    public LiveData<List<Movie>> getSeenMovies() {
-        return movieRepository.getAllSeenMovies();
-    }
-
-    public  LiveData<List<Movie>> getSavedMovies() {
-        return movieRepository.getSavedMovies();
     }
 
     public void saveMovieState(Integer movieId, boolean state) {
