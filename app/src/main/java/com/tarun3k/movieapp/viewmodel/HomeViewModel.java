@@ -35,9 +35,9 @@ public class HomeViewModel extends ViewModel {
         return movieRepository.trendingMoviesLiveData;
     }
     public void  intiAllLiveDatas() {
+        listOfWidgets.add(new Pair("Saved Movies",movieRepository.getSavedMovies()));
         listOfWidgets.add(new Pair("Now Playing",movieRepository.nowPlayingMoviesLiveData));
         listOfWidgets.add(new Pair("Trending Movies",movieRepository.trendingMoviesLiveData));
-        listOfWidgets.add(new Pair("Saved Movies",movieRepository.getSavedMovies()));
         listOfWidgets.add(new Pair("Last Seen",movieRepository.getAllSeenMovies()));
     }
 

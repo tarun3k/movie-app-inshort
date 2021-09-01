@@ -80,6 +80,11 @@ public class  HomeMovieWidget extends ConstraintLayout {
     }
 
     private void updateAdapter(List<Movie> movies) {
+        if(movies ==null ||movies.size() ==0) {
+            setVisibility(GONE);
+        } else {
+            setVisibility(VISIBLE);
+        }
         mAdapter.updateList(movies);
     }
 
