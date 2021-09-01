@@ -18,6 +18,14 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+            <View
+                android:id="@+id/save_icon"
+                app:layout_constraintEnd_toStartOf="@id/image"
+                app:layout_constraintBottom_toBottomOf="@id/image"
+                android:rotation="-30"
+                android:layout_width="50dp"
+                android:background="@drawable/ic_like_icon_deselected"
+                android:layout_height="50dp"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/title"

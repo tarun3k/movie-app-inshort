@@ -1,11 +1,21 @@
 package com.tarun3k.movieapp.repo;
 
+import android.app.Application;
+
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import com.tarun3k.movieapp.model.Movie;
 import com.tarun3k.movieapp.model.SearchResponse;
 import com.tarun3k.movieapp.model.SingleMovieData;
+import com.tarun3k.movieapp.repo.local.MovieDataBase;
+import com.tarun3k.movieapp.repo.local.MoviesDao;
+import com.tarun3k.movieapp.repo.local.SingleMovieDao;
+import com.tarun3k.movieapp.repo.local.SingleMovieDao_Impl;
 import com.tarun3k.movieapp.repo.remote.NetworkHelper;
+import com.tarun3k.movieapp.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,28 +31,86 @@ public class MovieRepository {
     List<Movie> trendingMovies = new ArrayList();
     List<Movie> nowPlayingMovies = new ArrayList<>();
 
-   public MutableLiveData<List<Movie>> trendingMoviesLiveData = new MutableLiveData<>();
-   public MutableLiveData<List<Movie>> nowPlayingMoviesLiveData = new MutableLiveData<>();
-   public MutableLiveData<List<Movie>> searchMoviesLiveData = new MutableLiveData<>();
-   public MutableLiveData<Integer> nowPlayingTotalPagesLiveData = new MutableLiveData<>();
-   public MutableLiveData<SingleMovieData> currentSelectedMovieLiveData = new MutableLiveData<>();
+   public LiveData<List<Movie>> trendingMoviesLiveData = new MutableLiveData<>();
+   public LiveData<List<Movie>> nowPlayingMoviesLiveData = new MutableLiveData<>();
+   public LiveData<List<Movie>> searchMoviesLiveData = new MutableLiveData<>();
+   public LiveData<Integer> nowPlayingTotalPagesLiveData = new MutableLiveData<>();
+   public LiveData<SingleMovieData> currentSelectedMovieLiveData = new MutableLiveData<>();
 
-    public MovieRepository(NetworkHelper networkHelper) {
+    private final MoviesDao mMovieDao;
+    private final SingleMovieDao singleMovieDao;
+
+    private LiveData<List<Movie>> mSeenMovies= new MutableLiveData<>();
+    private LiveData<List<Movie>> savedMovies = new MutableLiveData<>();
+
+    public MovieRepository(NetworkHelper networkHelper, Application application) {
         this.networkHelper = networkHelper;
+        MovieDataBase db = MovieDataBase.getDatabase(application);
+        mMovieDao = db.movieDao();
+        singleMovieDao = db.singleMovieDao();
+        mSeenMovies= singleMovieDao.getLastSeen();
+        savedMovies = singleMovieDao.getSavedMovies();
+        if(!Utils.isNetworkAvailable()) {
+            trendingMoviesLiveData = mMovieDao.getTrendingMovies();
+            nowPlayingMoviesLiveData = mMovieDao.getNowPlayingMovies();
+        }
     }
 
+    public LiveData<List<Movie>> getAllSeenMovies() {
+        return mSeenMovies;
+    }
+
+    public LiveData<List<Movie>> getSavedMovies() {
+        return savedMovies;
+    }
+
+    private void insert(Movie movie) {
+        MovieDataBase.databaseWriteExecutor.execute(() -> {
+            mMovieDao.insert(movie);
+        });
+    }
+
+    private  void insertSingleMovie(SingleMovieData singleMovieData) {
+        MovieDataBase.databaseWriteExecutor.execute(() -> {
+            singleMovieDao.insert(singleMovieData);
+        });
+    }
+
+    public void saveMovieState(Integer movieId, boolean state) {
+        MovieDataBase.databaseWriteExecutor.execute(()-> {
+            SingleMovieData singleMovieData = singleMovieDao.get(movieId);
+            Movie movie = mMovieDao.get(movieId);
+            if(movie!=null) {
+                movie.isSaved = state;
+                mMovieDao.insert(movie);
+            }
+            singleMovieData.isSaved = state;
+            singleMovieDao.insert(singleMovieData);
+        });
+    }
 
     public void fetchTrending() {
-        networkHelper.getService().getTrending("movie", "day").enqueue(trendingCallBack);
+        if (Utils.isNetworkAvailable()) {
+            networkHelper.getService().getTrending("movie", "day").enqueue(trendingCallBack);
+        }
     }
 
     public void fetchNowPlaying(Integer pageNo) {
-        networkHelper.getService().getNowPlaying(pageNo).enqueue(nowPlayingCallBack);
+        if (Utils.isNetworkAvailable()) {
+            networkHelper.getService().getNowPlaying(pageNo).enqueue(nowPlayingCallBack);
+        }
     }
 
     public void fetchSingleMovie(Integer movieId) {
-        currentSelectedMovieLiveData.setValue(null);
-        networkHelper.getService().getMovieById(movieId).enqueue(currentMovieCallback);
+        ((MutableLiveData<SingleMovieData> )currentSelectedMovieLiveData).setValue(null);
+        if (Utils.isNetworkAvailable()) {
+            networkHelper.getService().getMovieById(movieId).enqueue(currentMovieCallback);
+        } else {
+            MovieDataBase.databaseWriteExecutor.execute(()-> {
+                ((MutableLiveData<SingleMovieData>)currentSelectedMovieLiveData ).postValue(singleMovieDao.get(movieId));
+            });
+         }
+
     }
 
     public void searchMovie(String text) {
@@ -53,7 +121,7 @@ public class MovieRepository {
         @Override
         public void onResponse(Call<SearchResponse> call, Response<SearchResponse> response) {
             if(response.body()!=null) {
-                addImageUrlInfo(response.body().getMovieList());
+                addExtraInfo(new ArrayList<>(response.body().getMovieList()), 0);
                 trendingMovies.addAll(response.body().getMovieList());
                 setTrendingLiveData();
             }
@@ -65,9 +133,29 @@ public class MovieRepository {
         }
     };
 
-    private void addImageUrlInfo(List<Movie> movieList) {
+    private void addExtraInfo(List<Movie> movieList, int type) {
         for (Movie movie: movieList) {
             addImageInfo(movie);
+            MovieDataBase.databaseWriteExecutor.execute(()-> {
+                addStateInfo(movie, type, mMovieDao.get(movie.id));
+                insert(movie);
+            });
+        }
+    }
+
+    private void addStateInfo(Movie movie, int type, Movie localMovie) {
+        if(localMovie!=null) {
+            movie.isLastSeen = localMovie.isLastSeen;
+            movie.isNowPlaying = localMovie.isNowPlaying;
+            movie.isSaved = localMovie.isSaved;
+            movie.isTrending = localMovie.isTrending;
+        }
+        switch (type) {
+            case 0: movie.isTrending = true; break;
+            case 1: movie.isNowPlaying = true; break;
+            case 2: movie.isLastSeen = true; break;
+            case 3: movie.isSaved = true; break;
+            default:break;
         }
     }
 
@@ -76,20 +164,20 @@ public class MovieRepository {
     }
 
     private void setTrendingLiveData() {
-        trendingMoviesLiveData.setValue(trendingMovies);
+        ((MutableLiveData<List<Movie>> )trendingMoviesLiveData).setValue(trendingMovies);
     }
     private void setNowPlayingLiveData() {
-        nowPlayingMoviesLiveData.setValue(nowPlayingMovies);
+        ((MutableLiveData<List<Movie>> )nowPlayingMoviesLiveData).setValue(nowPlayingMovies);
     }
 
     Callback<SearchResponse> nowPlayingCallBack = new Callback<SearchResponse>() {
         @Override
         public void onResponse(Call<SearchResponse> call, Response<SearchResponse> response) {
             if(response.body()!=null) {
-                addImageUrlInfo(response.body().getMovieList());
+                addExtraInfo(response.body().getMovieList(), 1);
                 nowPlayingMovies.addAll(response.body().getMovieList());
                 if(response.body().getPageNo() == 1) {
-                    nowPlayingTotalPagesLiveData.setValue(response.body().getTotalPages());
+                    ((MutableLiveData<Integer> )nowPlayingTotalPagesLiveData).setValue(response.body().getTotalPages());
                 }
                 setNowPlayingLiveData();
             }
@@ -106,7 +194,11 @@ public class MovieRepository {
         public void onResponse(Call<SingleMovieData> call, Response<SingleMovieData> response) {
             if(response.body()!=null) {
                addImageInfo(response.body());
-               currentSelectedMovieLiveData.setValue(response.body());
+               MovieDataBase.databaseWriteExecutor.execute(()-> {
+                   addStateInfo(response.body(), 2, singleMovieDao.get(response.body().id));
+                   insertSingleMovie(response.body());
+                   ((MutableLiveData<SingleMovieData> )currentSelectedMovieLiveData).postValue(response.body());
+               });
             }
         }
 
@@ -120,8 +212,8 @@ public class MovieRepository {
         @Override
         public void onResponse(Call<SearchResponse> call, Response<SearchResponse> response) {
             if(response.body()!=null) {
-                addImageUrlInfo(response.body().getMovieList());
-                searchMoviesLiveData.setValue(response.body().getMovieList());
+                addExtraInfo(response.body().getMovieList(), -1);
+                ((MutableLiveData<List<Movie>> )searchMoviesLiveData).setValue(response.body().getMovieList());
             }
         }
 

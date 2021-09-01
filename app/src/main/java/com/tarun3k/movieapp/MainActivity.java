@@ -14,6 +14,7 @@ import com.tarun3k.movieapp.repo.remote.NetworkHelper;
 import com.tarun3k.movieapp.ui.base.BaseFragment;
 import com.tarun3k.movieapp.ui.fragments.HomeFragment;
 import com.tarun3k.movieapp.ui.fragments.MovieDetailsFragment;
+import com.tarun3k.movieapp.utils.Utils;
 import com.tarun3k.movieapp.viewmodel.HomeViewModel;
 
 public class MainActivity extends AppCompatActivity {
@@ -25,10 +26,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Utils.context = getApplicationContext();
         viewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @Override
             public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new HomeViewModel(new MovieRepository(new NetworkHelper()));
+                return (T) new HomeViewModel(new MovieRepository(new NetworkHelper(), getApplication()));
             }
         }).get(HomeViewModel.class);
         intiObservers();

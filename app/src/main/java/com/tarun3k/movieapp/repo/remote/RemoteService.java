@@ -23,9 +23,5 @@ public interface RemoteService {
 
     @GET("/3/search/movie?"+API_KEY)
     Call<SearchResponse> searchMovie(@Query("query") String query);
-
-
-
-
 }
 

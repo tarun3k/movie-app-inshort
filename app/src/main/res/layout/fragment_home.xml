@@ -23,20 +23,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_height="0dp">
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/widgets"
             android:layout_width="match_parent"
             android:orientation="vertical"
-            android:layout_height="wrap_content">
-        <com.tarun3k.movieapp.ui.custom.HomeMovieWidget
-            android:id="@+id/now_playing"
-            android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/margin_medium"
             android:layout_height="wrap_content"/>
-        <com.tarun3k.movieapp.ui.custom.HomeMovieWidget
-            android:id="@+id/trending"
-            android:layout_marginTop="@dimen/margin_medium"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        </androidx.appcompat.widget.LinearLayoutCompat>
 
     </ScrollView>
     <com.tarun3k.movieapp.ui.custom.HomeMovieWidget

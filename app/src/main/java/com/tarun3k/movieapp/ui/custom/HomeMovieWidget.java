@@ -3,6 +3,7 @@ package com.tarun3k.movieapp.ui.custom;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,9 +37,14 @@ public class  HomeMovieWidget extends ConstraintLayout {
 
     private void initBinding() {
         binding = HomeMovieWidgetBinding.inflate(LayoutInflater.from(getContext()), this, true);
+       // binding.getRoot().setPadding(12,12,0,12);
         mAdapter = new MoviesAdapter();
         binding.moviesRv.setAdapter(mAdapter);
         binding.moviesRv.setLayoutManager(new LinearLayoutManager(binding.moviesRv.getContext(), RecyclerView.HORIZONTAL, false));
+    }
+
+    public void setmLayoutParams(ViewGroup.LayoutParams layoutParams) {
+        binding.getRoot().setLayoutParams(layoutParams);
     }
 
     public HomeMovieWidget(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -117,6 +123,9 @@ public class  HomeMovieWidget extends ConstraintLayout {
                 isPaginationEnabled = false;
             }
         }
+    }
+    public String getTitle() {
+        return binding.title.getText().toString();
     }
 
     public void disableTitle() {
