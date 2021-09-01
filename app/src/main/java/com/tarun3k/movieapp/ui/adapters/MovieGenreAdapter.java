@@ -12,7 +12,14 @@ import com.tarun3k.movieapp.model.SingleMovieData;
 
 import java.util.List;
 
-public class MovieGenreAdapter extends RecyclerView.Adapter<MovieGenreAdapter.MovieGenreViewHolder> {
+import javax.inject.Inject;
+
+public class  MovieGenreAdapter extends RecyclerView.Adapter<MovieGenreAdapter.MovieGenreViewHolder> {
+
+    @Inject
+    public MovieGenreAdapter() {
+        super();
+    }
 
     List<SingleMovieData.Genres> list;
     @NonNull

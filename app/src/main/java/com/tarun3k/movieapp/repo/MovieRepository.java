@@ -3,9 +3,7 @@ package com.tarun3k.movieapp.repo;
 import android.app.Application;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 
 import com.tarun3k.movieapp.model.Movie;
 import com.tarun3k.movieapp.model.SearchResponse;
@@ -13,17 +11,20 @@ import com.tarun3k.movieapp.model.SingleMovieData;
 import com.tarun3k.movieapp.repo.local.MovieDataBase;
 import com.tarun3k.movieapp.repo.local.MoviesDao;
 import com.tarun3k.movieapp.repo.local.SingleMovieDao;
-import com.tarun3k.movieapp.repo.local.SingleMovieDao_Impl;
 import com.tarun3k.movieapp.repo.remote.NetworkHelper;
 import com.tarun3k.movieapp.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+@Singleton
 public class MovieRepository {
 
     NetworkHelper networkHelper;
@@ -43,6 +44,7 @@ public class MovieRepository {
     private LiveData<List<Movie>> mSeenMovies= new MutableLiveData<>();
     private LiveData<List<Movie>> savedMovies = new MutableLiveData<>();
 
+    @Inject
     public MovieRepository(NetworkHelper networkHelper, Application application) {
         this.networkHelper = networkHelper;
         MovieDataBase db = MovieDataBase.getDatabase(application);

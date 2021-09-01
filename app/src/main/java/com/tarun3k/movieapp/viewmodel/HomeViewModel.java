@@ -13,7 +13,12 @@ import com.tarun3k.movieapp.repo.MovieRepository;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class HomeViewModel extends ViewModel {
+
 
     MovieRepository movieRepository;
 
@@ -21,6 +26,7 @@ public class HomeViewModel extends ViewModel {
 
     private List<Pair<String,LiveData<List<Movie>>>> listOfWidgets = new ArrayList<>();
 
+    @Inject
     public HomeViewModel(MovieRepository movieRepository) {
         this.movieRepository = movieRepository;
     }

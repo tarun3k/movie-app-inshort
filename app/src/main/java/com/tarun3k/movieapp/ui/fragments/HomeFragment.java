@@ -12,20 +12,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.RecyclerView;
 
+import com.tarun3k.movieapp.MainActivity;
 import com.tarun3k.movieapp.databinding.FragmentHomeBinding;
 import com.tarun3k.movieapp.model.Movie;
-import com.tarun3k.movieapp.repo.MovieRepository;
-import com.tarun3k.movieapp.repo.remote.NetworkHelper;
 import com.tarun3k.movieapp.ui.base.BaseFragment;
 import com.tarun3k.movieapp.ui.custom.HomeMovieWidget;
 import com.tarun3k.movieapp.ui.custom.PaginationListener;
 import com.tarun3k.movieapp.viewmodel.HomeViewModel;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 
 public class HomeFragment extends BaseFragment {
@@ -34,7 +32,8 @@ public class HomeFragment extends BaseFragment {
 
     private FragmentHomeBinding binding;
 
-    private HomeViewModel viewModel;
+    @Inject
+    public HomeViewModel viewModel;
 
 
     @Override
@@ -45,7 +44,8 @@ public class HomeFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = new ViewModelProvider(mActivity).get(HomeViewModel.class);
+        //viewModel = new ViewModelProvider(mActivity).get(HomeViewModel.class);
+        ((MainActivity) requireActivity()).appComponent.inject(this);
         binding = FragmentHomeBinding.inflate(getLayoutInflater());
         viewModel.fetchData();
         viewModel.intiAllLiveDatas();

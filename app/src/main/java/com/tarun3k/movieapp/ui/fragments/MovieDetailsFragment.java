@@ -14,11 +14,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.tarun3k.movieapp.MainActivity;
 import com.tarun3k.movieapp.R;
 import com.tarun3k.movieapp.databinding.FragmentMovieDetailsBinding;
 import com.tarun3k.movieapp.ui.adapters.MovieGenreAdapter;
 import com.tarun3k.movieapp.ui.base.BaseFragment;
 import com.tarun3k.movieapp.viewmodel.HomeViewModel;
+
+import javax.inject.Inject;
 
 public class MovieDetailsFragment extends BaseFragment {
 
@@ -26,8 +29,12 @@ public class MovieDetailsFragment extends BaseFragment {
     public static String MOVIE_DATA = "movie_data";
 
     private FragmentMovieDetailsBinding binding;
-    private HomeViewModel viewModel;
-    private MovieGenreAdapter genereAdapter;
+
+    @Inject
+    public HomeViewModel viewModel;
+
+    @Inject
+    public MovieGenreAdapter genereAdapter;
     private Boolean saveIconState=false;
 
     @Override
@@ -38,7 +45,7 @@ public class MovieDetailsFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = new ViewModelProvider(mActivity).get(HomeViewModel.class);
+        ((MainActivity) requireActivity()).appComponent.inject(this);
     }
 
     private void finish() {
@@ -59,7 +66,6 @@ public class MovieDetailsFragment extends BaseFragment {
     private void intiViews() {
         binding.separator.setVisibility(View.GONE);
         binding.saveIcon.setVisibility(View.GONE);
-        genereAdapter = new MovieGenreAdapter();
         binding.rcGenre.setAdapter(genereAdapter);
         binding.rcGenre.setLayoutManager(new LinearLayoutManager(binding.rcGenre.getContext(), RecyclerView.HORIZONTAL, false));
         startProgressDialog();
