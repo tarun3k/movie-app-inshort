@@ -1,0 +1,46 @@
+# .github/workflows/runOnGitHub.yml
+# GitHub Actions documentation
+# => https://docs.github.com/en/actions
+name: Code Integration Checks
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+jobs:
+  JIRA_TITLE_CHECK:
+    name: Check PR Title
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for JIRA id in PR title
+        run: |
+          #!/bin/bash
+          echo "PR title is \"$PR_TITLE\""
+          if [[ ! $PR_TITLE =~ ^\[[A-Z0-9]+-[0-9]+\] ]];then
+            echo "PR title must start with JIRA ticket. e.g. \"[JIRA-123] $PR_TITLE\""
+            exit 1
+          fi
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+
+  PULL_REQUEST_TRIAGE:
+    name: check lines on PR
+    runs-on: ubuntu-latest
+    steps:
+      - uses: codelytv/pr-size-labeler@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          xs_label: 'size/XS'
+          xs_max_size: '30'
+          s_label: 'size/S'
+          s_max_size: '100'
+          m_label: 'size/M'
+          m_max_size: '250'
+          l_label: 'size/L'
+          l_max_size: '500'
+          xl_label: 'size/XL'
+          fail_if_xl: 'false'
+          message_if_xl: 'This PR exceeds the recommended size of 500 lines.
+                Please make sure you are NOT addressing multiple issues with one PR.
+                Note this PR might be rejected due to its size.'
